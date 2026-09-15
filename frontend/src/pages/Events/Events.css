@@ -1,0 +1,74 @@
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    margin: 0;
+}
+
+.page-header p {
+    margin-top: 8px;
+}
+
+.eventos-lista {
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.evento-form {
+    max-width: 800px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.evento-form h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.evento-card {
+    padding: 20px;
+    margin-bottom: 15px;
+    background-color: white;
+    border-radius: 8px;
+    border-left: 4px solid #2563eb;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.evento-card h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.evento-card p {
+    margin: 8px 0;
+}
+
+.evento-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}

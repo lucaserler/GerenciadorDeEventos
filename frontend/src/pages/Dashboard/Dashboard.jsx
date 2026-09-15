@@ -1,4 +1,5 @@
-import Sidebar from "./sidebar";
+import Sidebar from "../../components/Sidebar/sidebar";
+import "./Dashboard.css";
 
 function Dashboard() {
     return (
@@ -13,11 +14,6 @@ function Dashboard() {
                 <div className="cards">
                     <div className="card">
                         <h3>Eventos</h3>
-                        <strong>0</strong>
-                    </div>
-
-                    <div className="card">
-                        <h3>Participantes</h3>
                         <strong>0</strong>
                     </div>
                 </div>

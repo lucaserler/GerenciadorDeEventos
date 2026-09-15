@@ -1,0 +1,67 @@
+.login-container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8fafc;
+}
+
+.login-card {
+    width: 400px;
+    padding: 40px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.login-card h1 {
+    margin: 0 0 10px;
+    text-align: center;
+    font-size: 28px;
+}
+
+.login-card h2 {
+    margin: 0 0 30px;
+    text-align: center;
+    color: #334155;
+}
+
+.remember-password {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.remember-password input {
+    width: 16px;
+    height: 16px;
+}
+
+.remember-password label {
+    font-size: 14px;
+    color: #475569;
+    cursor: pointer;
+}
+
+.login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.login-buttons .btn-primary {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #2563eb;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.login-buttons .btn-primary:hover {
+    background-color: #1d4ed8;
+}

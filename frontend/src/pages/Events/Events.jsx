@@ -1,5 +1,10 @@
 import { useState } from "react";
-import Sidebar from "./sidebar";
+
+import Input from "../../components/Forms/Input";
+import Textarea from "../../components/Forms/Textarea";
+import Sidebar from "../../components/Sidebar/sidebar";
+import Button from "../../components/Buttons/Button";
+import "./Events.css";
 
 function Eventos() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -67,13 +72,24 @@ function Eventos() {
                         <h1>Eventos</h1>
                         <p>Gerencie os eventos cadastrados no sistema.</p>
                     </div>
-
-                    <button
+                    <Button
                         className="btn-primary"
-                        onClick={() => setMostrarFormulario(true)}
+                        onClick={() => {
+                            setEventoEditando(null);
+
+                            setFormulario({
+                                nome: "",
+                                descricao: "",
+                                data: "",
+                                horario: "",
+                                local: ""
+                            });
+
+                            setMostrarFormulario(true);
+                        }}
                     >
                         + Novo Evento
-                    </button>
+                    </Button>
                 </div>
 
                 {mostrarFormulario && (
@@ -85,105 +101,100 @@ function Eventos() {
                         </h2>
 
                         <form onSubmit={salvarEvento}>
-                            <div className="form-group">
-                                <label htmlFor="nome">Nome do evento</label>
+                            <Input
+                                label="Nome do evento"
+                                type="text"
+                                id="nome"
+                                placeholder="Digite o nome do evento"
+                                value={formulario.nome}
+                                onChange={(event) =>
+                                    setFormulario({
+                                        ...formulario,
+                                        nome: event.target.value
+                                    })
+                                }
+                            />
 
-                                <input
-                                    type="text"
-                                    id="nome"
-                                    placeholder="Digite o nome do evento"
-                                    value={formulario.nome}
-                                    onChange={(event) =>
-                                        setFormulario({
-                                            ...formulario,
-                                            nome: event.target.value
-                                        })}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="descricao">Descrição</label>
-
-                                <textarea
-                                    id="descricao"
-                                    placeholder="Digite uma descrição"
-                                    rows="4"
-                                    value={formulario.descricao}
-                                    onChange={(event) =>
-                                        setFormulario({
-                                            ...formulario,
-                                            descricao: event.target.value
-                                        })
-                                    }
-                                />
-                            </div>
+                            <Textarea
+                                label="Descrição"
+                                id="descricao"
+                                placeholder="Digite uma descrição"
+                                rows={4}
+                                value={formulario.descricao}
+                                onChange={(event) =>
+                                    setFormulario({
+                                        ...formulario,
+                                        descricao: event.target.value
+                                    })
+                                }
+                            />
 
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label htmlFor="data">Data</label>
-
-                                    <input
-                                        type="date"
-                                        id="data"
-                                        value={formulario.data}
-                                        onChange={(event) =>
-                                            setFormulario({
-                                                ...formulario,
-                                                data: event.target.value
-                                            })
-                                        }
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="horario">Horário</label>
-
-                                    <input
-                                        type="time"
-                                        id="horario"
-                                        value={formulario.horario}
-                                        onChange={(event) =>
-                                            setFormulario({
-                                                ...formulario,
-                                                horario: event.target.value
-                                            })
-                                        }
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="local">Local</label>
-
-                                <input
-                                    type="text"
-                                    id="local"
-                                    placeholder="Digite o local do evento"
-                                    value={formulario.local}
+                                <Input
+                                    label="Data"
+                                    type="date"
+                                    id="data"
+                                    value={formulario.data}
                                     onChange={(event) =>
                                         setFormulario({
                                             ...formulario,
-                                            local: event.target.value
+                                            data: event.target.value
+                                        })
+                                    }
+                                />
+
+                                <Input
+                                    label="Horário"
+                                    type="time"
+                                    id="horario"
+                                    value={formulario.horario}
+                                    onChange={(event) =>
+                                        setFormulario({
+                                            ...formulario,
+                                            horario: event.target.value
                                         })
                                     }
                                 />
                             </div>
 
+                            <Input
+                                label="Local"
+                                type="text"
+                                id="local"
+                                placeholder="Digite o local do evento"
+                                value={formulario.local}
+                                onChange={(event) =>
+                                    setFormulario({
+                                        ...formulario,
+                                        local: event.target.value
+                                    })
+                                }
+                            />
                             <div className="form-buttons">
-                                <button
+                                <Button
                                     type="button"
                                     className="btn-cancel"
-                                    onClick={() => setMostrarFormulario(false)}
+                                    onClick={() => {
+                                        setMostrarFormulario(false);
+                                        setEventoEditando(null);
+                                        setFormulario({
+                                            nome: "",
+                                            descricao: "",
+                                            data: "",
+                                            horario: "",
+                                            local: ""
+                                        });
+                                    }}
                                 >
                                     Cancelar
-                                </button>
+                                </Button>
 
-                                <button
+                                <Button
                                     type="submit"
                                     className="btn-primary"
                                 >
                                     Salvar Evento
-                                </button>
+                                </Button>
                             </div>
                         </form>
                     </div>
@@ -212,19 +223,21 @@ function Eventos() {
                                         <strong>Local:</strong> {evento.local}
                                     </p>
                                     <div className="evento-actions">
-                                        <button
+                                        <Button
+                                            type="button"
                                             className="btn-edit"
                                             onClick={() => editarEvento(index)}
                                         >
                                             Editar
-                                        </button>
+                                        </Button>
 
-                                        <button
+                                        <Button
+                                            type="button"
                                             className="btn-delete"
                                             onClick={() => excluirEvento(index)}
                                         >
                                             Excluir
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             ))
