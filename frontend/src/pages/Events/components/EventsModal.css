@@ -1,0 +1,116 @@
+
+/* Fundo do modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    background-color: rgba(0, 0, 0, 0.6);
+
+    z-index: 1000;
+}
+
+/* Caixa principal do modal */
+.evento-modal {
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+
+    padding: 24px;
+
+    background-color: #ffffff;
+    border-radius: 12px;
+
+    overflow-y: auto;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Cabeçalho do modal */
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    margin: 0;
+}
+
+/* Botão de fechar */
+.modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border: none;
+    border-radius: 6px;
+
+    background-color: transparent;
+
+    font-size: 28px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    background-color: #eeeeee;
+}
+
+/* Botões do formulário */
+.evento-modal .form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 24px;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .evento-modal {
+        padding: 18px;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .evento-modal .form-buttons {
+        flex-direction: column;
+    }
+}
+
+/* Prévia da imagem */
+.imagem-preview {
+    margin-top: 16px;
+}
+
+.imagem-preview p {
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.imagem-preview img {
+    display: block;
+
+    width: 100%;
+    max-width: 300px;
+    max-height: 200px;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+    border: 1px solid #dddddd;
+}

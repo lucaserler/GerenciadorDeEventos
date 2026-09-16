@@ -58,7 +58,7 @@ function Login() {
         JSON.stringify(usuario)
       );
 
-      navigate("/dashboard");
+      navigate("/events");
 
     } else {
       alert("E-mail ou senha inválidos!");
