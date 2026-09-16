@@ -1,5 +1,11 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+    listarEventos,
+    criarEvento,
+    atualizarEvento,
+    excluirEvento as apiExcluirEvento
+} from "../../services/eventService";
 
 import Sidebar from "../../components/Sidebar/sidebar";
 import Button from "../../components/Buttons/Button";
@@ -8,8 +14,23 @@ import "./Events.css";
 
 function Eventos() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
-    const [eventos, setEventos] = useState([]);
     const [eventoEditando, setEventoEditando] = useState(null);
+
+    const [eventos, setEventos] = useState([]);
+
+    useEffect(() => {
+        async function carregarEventos() {
+            try {
+                const eventosDoBackend = await listarEventos();
+
+                setEventos(eventosDoBackend);
+            } catch (erro) {
+                console.error("Erro ao carregar eventos:", erro);
+            }
+        }
+
+        carregarEventos();
+    }, []);
 
     const [formulario, setFormulario] = useState({
         nome: "",
@@ -38,23 +59,46 @@ function Eventos() {
         limparFormulario();
     }
 
-    function salvarEvento(event) {
+    async function salvarEvento(event) {
         event.preventDefault();
 
-        if (eventoEditando !== null) {
-            const novosEventos = [...eventos];
+        try {
+            const eventoParaEnviar = {
+                nome: formulario.nome,
+                descricao: formulario.descricao,
+                data: formulario.data,
+                horario: formulario.horario,
+                local: formulario.local
+            };
 
-            novosEventos[eventoEditando] = formulario;
+            if (eventoEditando !== null) {
+                const eventoAtual = eventos[eventoEditando];
 
-            setEventos(novosEventos);
-        } else {
-            setEventos([
-                ...eventos,
-                formulario
-            ]);
+                const eventoAtualizado = await atualizarEvento(
+                    eventoAtual.id,
+                    eventoParaEnviar
+                );
+
+                const novosEventos = [...eventos];
+
+                novosEventos[eventoEditando] = eventoAtualizado;
+
+                setEventos(novosEventos);
+            } else {
+                const novoEvento = await criarEvento(eventoParaEnviar);
+
+                setEventos([
+                    ...eventos,
+                    novoEvento
+                ]);
+            }
+
+            fecharModal();
+        } catch (erro) {
+            console.error("Erro ao salvar evento:", erro);
+
+            alert("Não foi possível salvar o evento.");
         }
-
-        fecharModal();
     }
 
     function editarEvento(index) {
@@ -63,13 +107,34 @@ function Eventos() {
         setMostrarFormulario(true);
     }
 
-    function excluirEvento(index) {
-        const novosEventos = eventos.filter(
-            (_, i) => i !== index
-        );
+async function excluirEvento(index) {
+    const evento = eventos[index];
 
-        setEventos(novosEventos);
+    if (!evento || !evento.id) {
+        alert("Não foi possível identificar o evento.");
+        return;
     }
+
+    const confirmar = window.confirm(
+        `Deseja realmente excluir o evento "${evento.nome}"?`
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    try {
+        await apiExcluirEvento(evento.id);
+
+        setEventos(
+            eventos.filter((_, indice) => indice !== index)
+        );
+    } catch (erro) {
+        console.error("Erro ao excluir evento:", erro);
+
+        alert("Não foi possível excluir o evento.");
+    }
+}
 
     function abrirNovoEvento() {
         limparFormulario();
