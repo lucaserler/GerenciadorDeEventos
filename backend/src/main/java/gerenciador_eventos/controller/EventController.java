@@ -1,69 +1,64 @@
-
 package gerenciador_eventos.controller;
 
 import gerenciador_eventos.entity.Event;
-import gerenciador_eventos.repository.EventRepository;
+import gerenciador_eventos.service.EventService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/eventos")
+@CrossOrigin(origins = "http://localhost:5173")
 public class EventController {
 
-    private final EventRepository eventRepository;
+    private final EventService eventService;
 
-    public EventController(EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
+    public EventController(EventService eventService) {
+        this.eventService = eventService;
     }
 
     @GetMapping
     public List<Event> listarEventos() {
-        return eventRepository.findAll();
+        return eventService.listarEventos();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Event> buscarEvento(@PathVariable Long id) {
-        return eventRepository.findById(id)
+    public ResponseEntity<Event> buscarEvento(
+            @PathVariable Long id
+    ) {
+        return eventService.buscarEvento(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Event criarEvento(@RequestBody Event evento) {
-        return eventRepository.save(evento);
+    public Event criarEvento(
+            @RequestBody Event evento
+    ) {
+        return eventService.criarEvento(evento);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Event> atualizarEvento(
             @PathVariable Long id,
-            @RequestBody Event dadosAtualizados) {
-        return eventRepository.findById(id)
-                .map(eventoExistente -> {
-
-                    eventoExistente.setNome(dadosAtualizados.getNome());
-                    eventoExistente.setDescricao(dadosAtualizados.getDescricao());
-                    eventoExistente.setData(dadosAtualizados.getData());
-                    eventoExistente.setHorario(dadosAtualizados.getHorario());
-                    eventoExistente.setLocal(dadosAtualizados.getLocal());
-
-                    Event eventoSalvo = eventRepository.save(eventoExistente);
-
-                    return ResponseEntity.ok(eventoSalvo);
-                })
+            @RequestBody Event dadosAtualizados
+    ) {
+        return eventService.atualizarEvento(id, dadosAtualizados)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluirEvento(@PathVariable Long id) {
-        if (!eventRepository.existsById(id)) {
+    public ResponseEntity<Void> excluirEvento(
+            @PathVariable Long id
+    ) {
+        boolean excluido = eventService.excluirEvento(id);
+
+        if (!excluido) {
             return ResponseEntity.notFound().build();
         }
-
-        eventRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
     }
