@@ -1,4 +1,3 @@
-
 /* Fundo do modal */
 .modal-overlay {
     position: fixed;
@@ -113,4 +112,11 @@
 
     border-radius: 8px;
     border: 1px solid #dddddd;
+}
+
+.evento-modal .campo-erro {
+    color: #dc2626 !important;
+    font-size: 13px;
+    margin-top: -12px;
+    margin-bottom: 12px;
 }

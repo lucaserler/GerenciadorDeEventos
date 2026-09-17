@@ -10,6 +10,7 @@ export async function listarEventos() {
     return await resposta.json();
 }
 
+
 export async function criarEvento(evento) {
     const resposta = await fetch(API_URL, {
         method: "POST",
@@ -20,7 +21,13 @@ export async function criarEvento(evento) {
     });
 
     if (!resposta.ok) {
-        throw new Error("Erro ao criar evento.");
+        const erros = await resposta.json();
+
+        const erro = new Error("Erro ao criar evento.");
+
+        erro.detalhes = erros;
+
+        throw erro;
     }
 
     return await resposta.json();

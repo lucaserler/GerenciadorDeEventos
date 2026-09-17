@@ -9,7 +9,9 @@ function EventModal({
     setFormulario,
     eventoEditando,
     salvarEvento,
-    fecharModal
+    fecharModal,
+    erros,
+    setErros
 }) {
     return (
         <div
@@ -46,14 +48,31 @@ function EventModal({
                         id="nome"
                         placeholder="Digite o nome do evento"
                         value={formulario.nome}
-                        onChange={(event) =>
+
+                        onChange={(event) => {
                             setFormulario({
                                 ...formulario,
                                 nome: event.target.value
-                            })
-                        }
+                            });
+
+                            setErros((errosAnteriores) => {
+                                const novosErros = {
+                                    ...errosAnteriores
+                                };
+
+                                delete novosErros.nome;
+
+                                return novosErros;
+                            });
+                        }}
                         required
                     />
+
+                    {erros?.nome && (
+                        <p className="campo-erro">
+                            {erros.nome}
+                        </p>
+                    )}
 
                     <Textarea
                         label="Descrição"
@@ -105,14 +124,30 @@ function EventModal({
                         id="local"
                         placeholder="Digite o local do evento"
                         value={formulario.local}
-                        onChange={(event) =>
+                        onChange={(event) => {
                             setFormulario({
                                 ...formulario,
                                 local: event.target.value
-                            })
-                        }
+                            });
+
+                            setErros((errosAnteriores) => {
+                                const novosErros = {
+                                    ...errosAnteriores
+                                };
+
+                                delete novosErros.local;
+
+                                return novosErros;
+                            });
+                        }}
                         required
                     />
+
+                    {erros?.local && (
+                        <p className="campo-erro">
+                            {erros.local}
+                        </p>
+                    )}
 
 
                     <div className="form-group">

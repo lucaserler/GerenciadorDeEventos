@@ -1,14 +1,17 @@
 
 package gerenciador_eventos.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "events")
@@ -18,14 +21,18 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "O nome do evento é obrigatório")
     private String nome;
 
     private String descricao;
 
+    @NotNull(message = "A data do evento é obrigatória")
     private LocalDate data;
 
+    @NotNull(message = "O horário do evento é obrigatório")
     private LocalTime horario;
 
+    @NotBlank(message = "O local do evento é obrigatório")
     private String local;
 
     public Event() {

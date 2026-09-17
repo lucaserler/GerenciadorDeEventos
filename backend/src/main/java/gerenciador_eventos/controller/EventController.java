@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/eventos")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -26,8 +28,7 @@ public class EventController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Event> buscarEvento(
-            @PathVariable Long id
-    ) {
+            @PathVariable Long id) {
         return eventService.buscarEvento(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -35,16 +36,14 @@ public class EventController {
 
     @PostMapping
     public Event criarEvento(
-            @RequestBody Event evento
-    ) {
+            @Valid @RequestBody Event evento) {
         return eventService.criarEvento(evento);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Event> atualizarEvento(
             @PathVariable Long id,
-            @RequestBody Event dadosAtualizados
-    ) {
+            @Valid @RequestBody Event dadosAtualizados) {
         return eventService.atualizarEvento(id, dadosAtualizados)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -52,8 +51,7 @@ public class EventController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirEvento(
-            @PathVariable Long id
-    ) {
+            @PathVariable Long id) {
         boolean excluido = eventService.excluirEvento(id);
 
         if (!excluido) {

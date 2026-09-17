@@ -15,6 +15,7 @@ import "./Events.css";
 function Eventos() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [eventoEditando, setEventoEditando] = useState(null);
+    const [erros, setErros] = useState({});
 
     const [eventos, setEventos] = useState([]);
 
@@ -52,6 +53,13 @@ function Eventos() {
         });
 
         setEventoEditando(null);
+
+        setErros({});
+    }
+
+    function abrirNovoEvento() {
+        limparFormulario();
+        setMostrarFormulario(true);
     }
 
     function fecharModal() {
@@ -94,10 +102,15 @@ function Eventos() {
             }
 
             fecharModal();
-        } catch (erro) {
+        }
+        catch (erro) {
             console.error("Erro ao salvar evento:", erro);
 
-            alert("Não foi possível salvar o evento.");
+            if (erro.detalhes) {
+                setErros(erro.detalhes);
+            } else {
+                alert("Não foi possível salvar o evento.");
+            }
         }
     }
 
@@ -107,38 +120,33 @@ function Eventos() {
         setMostrarFormulario(true);
     }
 
-async function excluirEvento(index) {
-    const evento = eventos[index];
+    async function excluirEvento(index) {
+        const evento = eventos[index];
 
-    if (!evento || !evento.id) {
-        alert("Não foi possível identificar o evento.");
-        return;
-    }
+        if (!evento || !evento.id) {
+            alert("Não foi possível identificar o evento.");
+            return;
+        }
 
-    const confirmar = window.confirm(
-        `Deseja realmente excluir o evento "${evento.nome}"?`
-    );
-
-    if (!confirmar) {
-        return;
-    }
-
-    try {
-        await apiExcluirEvento(evento.id);
-
-        setEventos(
-            eventos.filter((_, indice) => indice !== index)
+        const confirmar = window.confirm(
+            `Deseja realmente excluir o evento "${evento.nome}"?`
         );
-    } catch (erro) {
-        console.error("Erro ao excluir evento:", erro);
 
-        alert("Não foi possível excluir o evento.");
-    }
-}
+        if (!confirmar) {
+            return;
+        }
 
-    function abrirNovoEvento() {
-        limparFormulario();
-        setMostrarFormulario(true);
+        try {
+            await apiExcluirEvento(evento.id);
+
+            setEventos(
+                eventos.filter((_, indice) => indice !== index)
+            );
+        } catch (erro) {
+            console.error("Erro ao excluir evento:", erro);
+
+            alert("Não foi possível excluir o evento.");
+        }
     }
 
     return (
@@ -169,6 +177,8 @@ async function excluirEvento(index) {
                         eventoEditando={eventoEditando}
                         salvarEvento={salvarEvento}
                         fecharModal={fecharModal}
+                        erros={erros}
+                        setErros={setErros}
                     />
                 )}
 
