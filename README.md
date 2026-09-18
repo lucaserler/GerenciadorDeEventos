@@ -1,4 +1,4 @@
-# EventHub — Administração de Eventos
+Administração de Eventos
 
 O fluxo inclui cadastro e login de administradores, JWT, e gestão de eventos associada ao administrador autenticado.
 
