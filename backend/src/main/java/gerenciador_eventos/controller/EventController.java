@@ -5,6 +5,7 @@ import gerenciador_eventos.service.EventService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -22,8 +23,13 @@ public class EventController {
     }
 
     @GetMapping
-    public List<Event> listarEventos() {
-        return eventService.listarEventos();
+    public List<Event> listarEventos(
+            Authentication authentication) {
+
+        String emailAdministrador = authentication.getName();
+
+        return eventService.listarEventosPorAdministrador(
+                emailAdministrador);
     }
 
     @GetMapping("/{id}")
@@ -36,8 +42,14 @@ public class EventController {
 
     @PostMapping
     public Event criarEvento(
-            @Valid @RequestBody Event evento) {
-        return eventService.criarEvento(evento);
+            @Valid @RequestBody Event evento,
+            Authentication authentication) {
+
+        String emailAdministrador = authentication.getName();
+
+        return eventService.criarEvento(
+                evento,
+                emailAdministrador);
     }
 
     @PutMapping("/{id}")

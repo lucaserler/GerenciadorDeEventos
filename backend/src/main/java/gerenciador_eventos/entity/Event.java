@@ -2,16 +2,21 @@
 package gerenciador_eventos.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "events")
@@ -34,6 +39,11 @@ public class Event {
 
     @NotBlank(message = "O local do evento é obrigatório")
     private String local;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "administrador_id")
+    @JsonIgnore
+    private Administrador administrador;
 
     public Event() {
     }
@@ -84,5 +94,13 @@ public class Event {
 
     public void setLocal(String local) {
         this.local = local;
+    }
+
+    public Administrador getAdministrador() {
+        return administrador;
+    }
+
+    public void setAdministrador(Administrador administrador) {
+        this.administrador = administrador;
     }
 }

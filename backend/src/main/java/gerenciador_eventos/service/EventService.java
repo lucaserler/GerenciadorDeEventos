@@ -1,6 +1,9 @@
+
 package gerenciador_eventos.service;
 
+import gerenciador_eventos.entity.Administrador;
 import gerenciador_eventos.entity.Event;
+import gerenciador_eventos.repository.AdministradorRepository;
 import gerenciador_eventos.repository.EventRepository;
 
 import org.springframework.stereotype.Service;
@@ -12,9 +15,14 @@ import java.util.Optional;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final AdministradorRepository administradorRepository;
 
-    public EventService(EventRepository eventRepository) {
+    public EventService(
+            EventRepository eventRepository,
+            AdministradorRepository administradorRepository
+    ) {
         this.eventRepository = eventRepository;
+        this.administradorRepository = administradorRepository;
     }
 
     public List<Event> listarEventos() {
@@ -25,7 +33,19 @@ public class EventService {
         return eventRepository.findById(id);
     }
 
-    public Event criarEvento(Event evento) {
+    public Event criarEvento(
+            Event evento,
+            String emailAdministrador
+    ) {
+
+        Administrador administrador =
+                administradorRepository.findByEmail(emailAdministrador)
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Administrador autenticado não encontrado."
+                        ));
+
+        evento.setAdministrador(administrador);
+
         return eventRepository.save(evento);
     }
 
@@ -69,4 +89,18 @@ public class EventService {
 
         return true;
     }
+
+    public List<Event> listarEventosPorAdministrador(
+        String emailAdministrador
+) {
+
+    Administrador administrador =
+            administradorRepository.findByEmail(emailAdministrador)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Administrador autenticado não encontrado."
+                    ));
+
+    return eventRepository.findByAdministrador(administrador);
+}
+
 }
