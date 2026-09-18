@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,60 +9,76 @@ import "./Login.css";
 function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [gravarSenha, setGravarSenha] = useState(false);
+  const [gravarEmail, setGravarEmail] = useState(false);
+  const [carregando, setCarregando] = useState(false);
 
   const navigate = useNavigate();
 
-  // Carrega os dados salvos quando a tela abrir
+  // Carrega o email salvo quando a tela abrir
   useEffect(() => {
-    const dadosSalvos = localStorage.getItem("loginSalvo");
+    const emailSalvo = localStorage.getItem("emailLogin");
 
-    if (dadosSalvos) {
-      const dados = JSON.parse(dadosSalvos);
-
-      setEmail(dados.email);
-      setSenha(dados.senha);
-      setGravarSenha(true);
+    if (emailSalvo) {
+      setEmail(emailSalvo);
+      setGravarEmail(true);
     }
   }, []);
 
-  function handleLogin(event) {
+  async function handleLogin(event) {
     event.preventDefault();
 
-    const usuariosSalvos =
-      JSON.parse(localStorage.getItem("usuarios")) || [];
+    setCarregando(true);
 
-    const usuario = usuariosSalvos.find(
-      (usuario) =>
-        usuario.email === email &&
-        usuario.senha === senha
-    );
+    try {
+      const resposta = await fetch(
+        "http://localhost:8080/api/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: email,
+            senha: senha
+          })
+        }
+      );
 
-    if (usuario) {
-
-      if (gravarSenha) {
-        const dadosLogin = {
-          email: email,
-          senha: senha
-        };
-
-        localStorage.setItem(
-          "loginSalvo",
-          JSON.stringify(dadosLogin)
-        );
-      } else {
-        localStorage.removeItem("loginSalvo");
+      if (!resposta.ok) {
+        throw new Error("E-mail ou senha inválidos.");
       }
+
+      const dados = await resposta.json();
+
+      // Salva ou remove somente o email
+      if (gravarEmail) {
+        localStorage.setItem("emailLogin", email);
+      } else {
+        localStorage.removeItem("emailLogin");
+      }
+
+      // Armazena o token JWT
+      localStorage.setItem("token", dados.token);
+
+      // Armazena os dados públicos do administrador
+      const usuarioLogado = {
+        administradorId: dados.administradorId,
+        nome: dados.nome,
+        email: dados.email
+      };
 
       localStorage.setItem(
         "usuarioLogado",
-        JSON.stringify(usuario)
+        JSON.stringify(usuarioLogado)
       );
 
+      // Redireciona para a página de eventos
       navigate("/events");
 
-    } else {
-      alert("E-mail ou senha inválidos!");
+    } catch (erro) {
+      alert(erro.message);
+    } finally {
+      setCarregando(false);
     }
   }
 
@@ -102,19 +119,18 @@ function Login() {
             required
           />
 
-
           <div className="remember-password">
             <input
               type="checkbox"
-              id="gravarSenha"
-              checked={gravarSenha}
+              id="gravarEmail"
+              checked={gravarEmail}
               onChange={(event) =>
-                setGravarSenha(event.target.checked)
+                setGravarEmail(event.target.checked)
               }
             />
 
-            <label htmlFor="gravarSenha">
-              Gravar Senha
+            <label htmlFor="gravarEmail">
+              Lembrar e-mail
             </label>
           </div>
 
@@ -123,8 +139,9 @@ function Login() {
             <Button
               type="submit"
               className="btn-primary"
+              disabled={carregando}
             >
-              Entrar
+              {carregando ? "Entrando..." : "Entrar"}
             </Button>
 
             <Button

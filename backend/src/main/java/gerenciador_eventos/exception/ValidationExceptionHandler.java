@@ -1,4 +1,3 @@
-
 package gerenciador_eventos.exception;
 
 import org.springframework.http.HttpStatus;
@@ -15,13 +14,14 @@ public class ValidationExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> tratarErrosDeValidacao(
-            MethodArgumentNotValidException erro
-    ) {
+            MethodArgumentNotValidException erro) {
+
         Map<String, String> erros = new HashMap<>();
 
         erro.getBindingResult()
                 .getFieldErrors()
                 .forEach(fieldError -> {
+
                     String campo = fieldError.getField();
                     String mensagem = fieldError.getDefaultMessage();
 
@@ -31,5 +31,18 @@ public class ValidationExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(erros);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> tratarErroDeRegraDeNegocio(
+            IllegalArgumentException erro) {
+
+        Map<String, String> resposta = new HashMap<>();
+
+        resposta.put("mensagem", erro.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(resposta);
     }
 }

@@ -1,7 +1,23 @@
 const API_URL = "http://localhost:8080/api/eventos";
 
+// Retorna os cabeçalhos com o token JWT
+function obterCabecalhosAutenticacao() {
+
+    const token = localStorage.getItem("token");
+
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    };
+}
+
+// Lista os eventos do administrador autenticado
 export async function listarEventos() {
-    const resposta = await fetch(API_URL);
+
+    const resposta = await fetch(API_URL, {
+        method: "GET",
+        headers: obterCabecalhosAutenticacao()
+    });
 
     if (!resposta.ok) {
         throw new Error("Erro ao buscar eventos.");
@@ -10,18 +26,24 @@ export async function listarEventos() {
     return await resposta.json();
 }
 
-
+// Cria um novo evento
 export async function criarEvento(evento) {
+
     const resposta = await fetch(API_URL, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: obterCabecalhosAutenticacao(),
         body: JSON.stringify(evento)
     });
 
     if (!resposta.ok) {
-        const erros = await resposta.json();
+
+        let erros;
+
+        try {
+            erros = await resposta.json();
+        } catch {
+            erros = null;
+        }
 
         const erro = new Error("Erro ao criar evento.");
 
@@ -33,12 +55,12 @@ export async function criarEvento(evento) {
     return await resposta.json();
 }
 
+// Atualiza um evento
 export async function atualizarEvento(id, evento) {
+
     const resposta = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: obterCabecalhosAutenticacao(),
         body: JSON.stringify(evento)
     });
 
@@ -49,9 +71,12 @@ export async function atualizarEvento(id, evento) {
     return await resposta.json();
 }
 
+// Exclui um evento
 export async function excluirEvento(id) {
+
     const resposta = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: obterCabecalhosAutenticacao()
     });
 
     if (!resposta.ok) {

@@ -13,45 +13,62 @@ function UserRegistration() {
     const [senha, setSenha] = useState("");
     const [confirmarSenha, setConfirmarSenha] = useState("");
 
-    function handleCadastro(event) {
+    const [carregando, setCarregando] = useState(false);
+    const [erro, setErro] = useState("");
+
+    async function handleCadastro(event) {
         event.preventDefault();
 
+        setErro("");
+
         if (senha !== confirmarSenha) {
-            alert("As senhas não são iguais!");
+            setErro("As senhas não são iguais!");
             return;
         }
 
-        const usuariosSalvos =
-            JSON.parse(localStorage.getItem("usuarios")) || [];
+        setCarregando(true);
 
-        const usuarioExistente = usuariosSalvos.find(
-            (usuario) => usuario.email === email
-        );
+        try {
+            const resposta = await fetch(
+                "http://localhost:8080/api/administradores",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        nome: nome,
+                        email: email,
+                        senha: senha
+                    })
+                }
+            );
 
-        if (usuarioExistente) {
-            alert("Este e-mail já está cadastrado!");
-            return;
+            if (!resposta.ok) {
+                let mensagem = "Não foi possível realizar o cadastro.";
+
+                try {
+                    const dadosErro = await resposta.json();
+
+                    if (typeof dadosErro === "object") {
+                        mensagem = Object.values(dadosErro).join(" ");
+                    }
+                } catch {
+                    // Mantém a mensagem padrão caso a resposta não seja JSON
+                }
+
+                throw new Error(mensagem);
+            }
+
+            alert("Cadastro realizado com sucesso!");
+
+            navigate("/login");
+
+        } catch (erro) {
+            setErro(erro.message);
+        } finally {
+            setCarregando(false);
         }
-
-        const novoUsuario = {
-            nome,
-            email,
-            senha
-        };
-
-        const novosUsuarios = [
-            ...usuariosSalvos,
-            novoUsuario
-        ];
-
-        localStorage.setItem(
-            "usuarios",
-            JSON.stringify(novosUsuarios)
-        );
-
-        alert("Cadastro realizado com sucesso!");
-
-        navigate("/login");
     }
 
     function voltarLogin() {
@@ -116,11 +133,18 @@ function UserRegistration() {
                         required
                     />
 
+                    {erro && (
+                        <p className="campo-erro">
+                            {erro}
+                        </p>
+                    )}
+
                     <Button
                         type="submit"
                         className="btn-primary"
+                        disabled={carregando}
                     >
-                        Criar Conta
+                        {carregando ? "Cadastrando..." : "Criar Conta"}
                     </Button>
 
                     <Button
