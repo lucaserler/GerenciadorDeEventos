@@ -21,8 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter
-    ) {
+            JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
@@ -30,65 +29,56 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-            .cors()
+                .cors()
                 .and()
-            .csrf()
+                .csrf()
                 .disable()
-            .authorizeRequests()
+                .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**")
-                    .permitAll()
+                .permitAll()
                 .antMatchers(
-                    "/api/administradores",
-                    "/api/login",
-                    "/swagger-ui/**",
-                    "/swagger-resources/**",
-                    "/v2/api-docs",
-                    "/webjars/**"
-                )
-                    .permitAll()
+                        "/api/administradores",
+                        "/api/login",
+                        "/swagger-ui/**",
+                        "/swagger-resources/**",
+                        "/v2/api-docs",
+                        "/webjars/**")
+                .permitAll()
                 .anyRequest()
-                    .authenticated()
+                .authenticated()
                 .and()
-            .addFilterBefore(
-                jwtAuthenticationFilter,
-                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class
-            );
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration configuration =
-                new CorsConfiguration();
+        CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                Arrays.asList("http://localhost:5173")
-        );
+                Arrays.asList("http://localhost:5173",
+                        "http://localhost:8081"));
 
         configuration.setAllowedMethods(
                 Arrays.asList(
-                    "GET",
-                    "POST",
-                    "PUT",
-                    "DELETE",
-                    "OPTIONS"
-                )
-        );
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "OPTIONS"));
 
         configuration.setAllowedHeaders(
                 Arrays.asList(
-                    "Authorization",
-                    "Content-Type"
-                )
-        );
+                        "Authorization",
+                        "Content-Type"));
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         source.registerCorsConfiguration(
                 "/**",
-                configuration
-        );
+                configuration);
 
         return source;
     }
